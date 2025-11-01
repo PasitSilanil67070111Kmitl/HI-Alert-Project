@@ -28,7 +28,7 @@ String chatID   = "-1003242974830";  // ใส่ chat ID
 WiFiSSLClient sslClient;
 HttpClient http(sslClient, "api.telegram.org", 443);
 
-// ---------- ตัวแปรช่วยส่ง Telegram เมื่อเปลี่ยนสถานะความร้อน ----------
+// ---------- ตัวแปรช่วยส่ง Telegram ไม่ spam ----------
 int current_status=0;
 int prev_status=-1;
 
@@ -56,10 +56,13 @@ bool sendTelegram(String message) {
     Serial.print("Telegram status: "); Serial.println(statusCode);
     if(statusCode == 200) {
       Serial.println("Notify sent to Telegram successfully!");
+      http.stop();
       return true;
     }
+    http.stop();
     delay(2000); // รอ 2 วินาทีก่อน retry
   }
+  http.stop();
   return false;
 }
 
@@ -152,7 +155,6 @@ void loop() {
 
   // ---------- ระบบแจ้งเตือน Telegram แบบไม่ spam ----------
   String alertMsg = "";
-  int prev_status=current_status;
   if(heatIndex > 53) current_status=4;
   else if(heatIndex > 43) current_status=3;
   else if(heatIndex > 35) current_status=2;
@@ -164,8 +166,8 @@ void loop() {
     else if(current_status==2) alertMsg = "☀️ อากาศค่อนข้างร้อน หมั่นดื่มน้ำ และควรหลีกเลี่ยงทำกิจกรรมกลางแดดติดต่อกันเป็นเวลานาน: ดัชนีความร้อน =" + String(heatIndex,1) + "°C";
     else if(current_status==1) alertMsg = "⛅️ อากาศสบาย แต่ก็ควรดื่มน้ำและป้องกันแสงแดดระหว่างวัน: ดัชนีความร้อน =" + String(heatIndex,1) + "°C";
     else if(current_status==0) alertMsg = "❄️ อากาศค่อนข้างเย็น ไม่มีอะไรต้องกังวล: ดัชนีความร้อน =" + String(heatIndex,1) + "°C";
+    prev_status=current_status;
   }
-    if(alertMsg != "") sendTelegram(alertMsg);
-
-  else delay(20000); // วน loop ทุก 20 วินาที
+  if(alertMsg != "") sendTelegram(alertMsg);
+  delay(20000); // วน loop ทุก 20 วินาที
 }
