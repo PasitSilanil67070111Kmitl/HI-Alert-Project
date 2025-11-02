@@ -27,3 +27,5 @@
 * **Output:** ดัชนีความร้อน (Heat Index), ระดับเตือน (เช่น ปกติ, ระวัง, เสี่ยง, อันตราย), ข้อความคำแนะนำ 
 
 ---
+Video https://youtu.be/UntFrc0dIfQ?si=o2hMyDqDBLHNTR_P
+Web https://pasitsilanil67070111kmitl.github.io/
